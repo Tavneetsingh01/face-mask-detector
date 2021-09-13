@@ -1,0 +1,6 @@
+# Python virtual environments
+faceDetectionEnv
+.vscode
+__pycache__
+CONTRIBUTORS.md
+README.md
