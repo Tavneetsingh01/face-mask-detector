@@ -86,8 +86,8 @@ def mask_image():
 
             # determine the class label and color we'll use to draw
             # the bounding box and text
-            label = "Mask" if mask > withoutMask else "without Mask"
-            color = (0, 255, 0) if label == "With Mask" else (0, 0, 255)
+            label = "with_Mask" if mask > withoutMask else "without_Mask"
+            color = (0, 255, 0) if label == "with_Mask" else (0, 0, 255)
 
             # include the probability in the label
             label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
