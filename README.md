@@ -32,7 +32,7 @@ The images used were real images of faces wearing masks. The images were collect
 
 ## :key: Prerequisites
 
-All the dependencies and required libraries are included in the file <code>projectDependenciesPlain.txt</code> [See here](https://github.com/chandrikadeb7/Face-Mask-Detection/blob/master/requirements.txt)
+All the dependencies and required libraries are included in the file <code>projectDependenciesPlain.txt</code> [See here](https://github.com/Tavneetsingh01/face-mask-detector/blob/master/projectDependenciesPlain.txt)
 
 ## 🚀&nbsp; Installation
 1. Clone the repo
