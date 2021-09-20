@@ -11,6 +11,8 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 import detect_mask_image
+import winsound
+
 
 
 # Setting custom Page Title and Icon with changed layout and sidebar state
@@ -159,11 +161,10 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 		# in the above `for` loop
 		faces = np.array(faces, dtype="float32")
 		preds = maskNet.predict(faces, batch_size=32)
-
+          
 	# return a 2-tuple of the face locations and their corresponding
 	# locations
 	return (locs, preds)
-
 
 def mask_detection():
     local_css("css/styles.css")
@@ -193,11 +194,51 @@ def mask_detection():
         FRAME_WINDOW = st.image([])
         vs = VideoStream(src=0).start()
         time.sleep(2.0)
-
+        
+        # initialize the FourCC, video writer, dimensions of the frame, and
+        # zeros array
+        
+        fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
+        writer = None
+        (h, w) = (None, None)
+        zeros = None
+        
+        #optput variable takes the directory where we want to save the realtime video
+        output=os.path.sep.join(["saved_videos", time.strftime("%Y%m%d-%H%M%S") + ".avi"])
+        
         while True:
             frame = vs.read()
             frame = imutils.resize(frame, width=600)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+            # check if the writer is None
+            if writer is None:
+                # store the image dimensions, initialize the video writer,
+                # and construct the zeros array
+                (h, w) = frame.shape[:2]
+                writer = cv2.VideoWriter(output, fourcc, 30,
+                    (w * 2, h * 2), True)
+                zeros = np.zeros((h, w), dtype="uint8")
+        
+            # break the image into its RGB components, then construct the
+            # RGB representation of each frame individually
+            (B, G, R) = cv2.split(frame)
+            R = cv2.merge([zeros, zeros, R])
+            G = cv2.merge([zeros, G, zeros])
+            B = cv2.merge([B, zeros, zeros])
+            # construct the final output frame, storing the original frame
+            # at the top-left, the red channel in the top-right, the green
+            # channel in the bottom-right, and the blue channel in the
+            # bottom-left
+            output = np.zeros((h * 2, w * 2, 3), dtype="uint8")
+            output[0:h, 0:w] = frame
+            output[0:h, w:w * 2] = R
+            output[h:h * 2, w:w * 2] = G
+            output[h:h * 2, 0:w] = B
+            # write the output frame to file
+
+            writer.write(output)
+
             
             # detect faces in the frame and determine if they are wearing a
 	        # face mask or not
@@ -214,7 +255,10 @@ def mask_detection():
                 # the bounding box and text
                 label = "with Mask" if mask > withoutMask else "without Mask"
                 color = (0, 255, 0) if label == "with Mask" else (255, 0, 0)
-                    
+                
+                #beep sound when the person without_mask is deected
+                winsound.Beep(800,500) if label == "without Mask" else winsound.MB_OK
+                
                 # include the probability in the label
                 label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 

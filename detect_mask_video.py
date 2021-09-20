@@ -12,6 +12,7 @@ import imutils
 import time
 import cv2
 import os
+import winsound
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
 	# grab the dimensions of the frame and then construct a blob
@@ -87,7 +88,7 @@ ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
 
 #args of saving the captured video stream to file.
-ap.add_argument("-ov", "--output", required=False, default= time.strftime("%Y%m%d-%H%M%S") + ".avi",
+ap.add_argument("-ov", "--output", required=False, default= os.path.sep.join(["saved_videos", time.strftime("%Y%m%d-%H%M%S") + ".avi"]),
 	help="path to output video file")
 ap.add_argument("-p", "--picamera", type=int, default=-1,
 	help="whether or not the Raspberry Pi camera should be used")
@@ -170,7 +171,7 @@ while True:
 		# the bounding box and text
 		label = "with Mask" if mask > withoutMask else "without Mask"
 		color = (0, 255, 0) if label == "with Mask" else (0, 0, 255)
-			
+		winsound.Beep(800,500) if label == "without Mask" else winsound.MB_OK	
 		# include the probability in the label
 		label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
