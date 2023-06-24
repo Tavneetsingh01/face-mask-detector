@@ -99,6 +99,6 @@ def mask_image():
 	# show the output image
 	cv2.imshow("Output", image)
 	cv2.waitKey(0)
-	
+    
 if __name__ == "__main__":
 	mask_image()
